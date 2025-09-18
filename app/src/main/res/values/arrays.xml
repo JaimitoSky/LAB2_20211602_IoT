@@ -1,0 +1,12 @@
+<resources>
+    <string-array name="device_status">
+        <item>Operativo</item>
+        <item>En reparación</item>
+        <item>Dado de baja</item>
+    </string-array>
+
+    <string-array name="switch_type">
+        <item>Administrable</item>
+        <item>No Administrable</item>
+    </string-array>
+</resources>

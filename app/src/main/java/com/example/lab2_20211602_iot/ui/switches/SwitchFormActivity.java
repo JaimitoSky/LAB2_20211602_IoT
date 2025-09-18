@@ -1,4 +1,4 @@
-package com.example.lab2_20211602_iot.ui.routers;
+package com.example.lab2_20211602_iot.ui.switches;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,18 +10,18 @@ import com.example.lab2_20211602_iot.data.model.Device;
 import com.example.lab2_20211602_iot.data.model.DeviceStatus;
 import com.example.lab2_20211602_iot.data.model.DeviceType;
 import com.example.lab2_20211602_iot.data.repository.DeviceRepository;
-import com.example.lab2_20211602_iot.databinding.ActivityRouterFormBinding;
+import com.example.lab2_20211602_iot.databinding.ActivitySwitchFormBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
-public class RouterFormActivity extends AppCompatActivity {
-    private ActivityRouterFormBinding binding;
+public class SwitchFormActivity extends AppCompatActivity {
+    private ActivitySwitchFormBinding binding;
     private DeviceRepository repo;
-    private Device current; // null si es crear
+    private Device current;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityRouterFormBinding.inflate(getLayoutInflater());
+        binding = ActivitySwitchFormBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -30,19 +30,24 @@ public class RouterFormActivity extends AppCompatActivity {
 
         repo = new DeviceRepository(this);
 
-        // Spinner de estados
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        // Spinners
+        ArrayAdapter<CharSequence> est = ArrayAdapter.createFromResource(
                 this, R.array.device_status, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spStatus.setAdapter(adapter);
+        est.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spStatus.setAdapter(est);
+
+        ArrayAdapter<CharSequence> tipo = ArrayAdapter.createFromResource(
+                this, R.array.switch_type, android.R.layout.simple_spinner_item);
+        tipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spType.setAdapter(tipo);
 
         long id = getIntent().getLongExtra("id", -1);
-        if (id != -1) { // edición
+        if (id != -1) {
             current = repo.findById(id);
-            getSupportActionBar().setTitle("Actualizar Router");
+            getSupportActionBar().setTitle("Actualizar Switch");
             fillForm(current);
         } else {
-            getSupportActionBar().setTitle("Crear Router");
+            getSupportActionBar().setTitle("Crear Switch");
         }
         invalidateOptionsMenu();
     }
@@ -50,7 +55,8 @@ public class RouterFormActivity extends AppCompatActivity {
     private void fillForm(Device d){
         binding.tilBrand.getEditText().setText(d.brand);
         binding.tilModel.getEditText().setText(d.model);
-        binding.tilSpeed.getEditText().setText(String.valueOf(d.speedGbps));
+        binding.tilPorts.getEditText().setText(d.ports==null? "" : String.valueOf(d.ports));
+        binding.spType.setSelection((d.manageable!=null && d.manageable)?0:1);
         int idx = d.status==DeviceStatus.OPERATIVO ?0 : d.status==DeviceStatus.REPARACION?1:2;
         binding.spStatus.setSelection(idx);
     }
@@ -67,7 +73,7 @@ public class RouterFormActivity extends AppCompatActivity {
             new MaterialAlertDialogBuilder(this)
                     .setMessage("¿Está seguro que desea Borrar?")
                     .setNegativeButton("CANCELAR", null)
-                    .setPositiveButton("ACEPTAR", (d, w) -> { delete(); })
+                    .setPositiveButton("ACEPTAR", (d, w) -> delete())
                     .show();
             return true;
         }
@@ -77,44 +83,37 @@ public class RouterFormActivity extends AppCompatActivity {
     private void save(){
         String brand = binding.tilBrand.getEditText().getText().toString().trim();
         String model = binding.tilModel.getEditText().getText().toString().trim();
-        String speedStr = binding.tilSpeed.getEditText().getText().toString().trim();
+        String portsStr = binding.tilPorts.getEditText().getText().toString().trim();
 
         if (brand.isEmpty()) { binding.tilBrand.setError("Requerido"); return; }
         if (model.isEmpty()) { binding.tilModel.setError("Requerido"); return; }
-        float speed;
-        try { speed = Float.parseFloat(speedStr); }
-        catch (Exception e){ binding.tilSpeed.setError("Numérico"); return; }
+        int ports;
+        try { ports = Integer.parseInt(portsStr); }
+        catch (Exception e){ binding.tilPorts.setError("Numérico"); return; }
 
-        DeviceStatus status = binding.spStatus.getSelectedItemPosition()==0? DeviceStatus.OPERATIVO:
-                binding.spStatus.getSelectedItemPosition()==1? DeviceStatus.REPARACION: DeviceStatus.BAJA;
-        if (current == null) {
-            Device d = new Device(
-                    DeviceType.ROUTER,
-                    brand,
-                    model,
-                    speed,
-                    null,
-                    null,
-                    status
-            );
+        boolean manageable = binding.spType.getSelectedItemPosition()==0;
+        DeviceStatus status =
+                binding.spStatus.getSelectedItemPosition()==0? DeviceStatus.OPERATIVO:
+                        binding.spStatus.getSelectedItemPosition()==1? DeviceStatus.REPARACION: DeviceStatus.BAJA;
+
+        if (current == null){
+            Device d = new Device(DeviceType.SWITCH, brand, model,
+                    null, ports, manageable, status);
             repo.insert(d);
-            Snackbar.make(binding.getRoot(), "Router creado", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.getRoot(), "Switch creado", Snackbar.LENGTH_SHORT).show();
         } else {
-            current.brand = brand;
-            current.model = model;
-            current.speedGbps = speed;
-            current.status = status;
+            current.brand = brand; current.model = model;
+            current.ports = ports; current.manageable = manageable; current.status = status;
             repo.update(current);
             Snackbar.make(binding.getRoot(), "Cambios guardados", Snackbar.LENGTH_SHORT).show();
         }
-
         finish();
     }
 
     private void delete(){
         if (current != null){
             repo.delete(current);
-            Snackbar.make(binding.getRoot(), "Router eliminado", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.getRoot(), "Switch eliminado", Snackbar.LENGTH_SHORT).show();
             finish();
         }
     }
