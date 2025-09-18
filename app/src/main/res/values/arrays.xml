@@ -9,4 +9,12 @@
         <item>Administrable</item>
         <item>No Administrable</item>
     </string-array>
+
+
+    <string-array name="ap_frequency">
+        <item>2.4 GHz</item>
+        <item>5 GHz</item>
+        <item>Dual Band</item>
+    </string-array>
+
 </resources>

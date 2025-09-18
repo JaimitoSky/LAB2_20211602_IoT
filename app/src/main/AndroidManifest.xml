@@ -11,7 +11,8 @@
             tools:ignore="Instantiatable" />
         <activity android:name=".ui.switches.SwitchFormActivity" />
         <activity android:name=".ui.switches.SwitchListActivity" />
-
+        <activity android:name=".ui.aps.APFormActivity" />
+        <activity android:name=".ui.aps.APListActivity" />
         <activity android:name=".ui.routers.RouterListActivity"
             tools:ignore="Instantiatable" />
         <activity android:name=".ui.main.MainActivity"

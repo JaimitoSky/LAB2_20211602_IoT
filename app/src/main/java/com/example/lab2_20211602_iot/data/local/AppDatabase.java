@@ -5,7 +5,7 @@ import androidx.room.*;
 import com.example.lab2_20211602_iot.data.local.converters.EnumConverters;
 import com.example.lab2_20211602_iot.data.model.Device;
 
-@Database(entities = {Device.class}, version = 2, exportSchema = false)
+@Database(entities = {Device.class}, version = 3, exportSchema = false)
 @TypeConverters({EnumConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DeviceDao deviceDao();

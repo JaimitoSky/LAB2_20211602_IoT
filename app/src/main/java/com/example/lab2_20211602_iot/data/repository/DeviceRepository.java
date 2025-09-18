@@ -19,6 +19,7 @@ public class DeviceRepository {
     public int update(Device d){ return dao.update(d); }
     public int delete(Device d){ return dao.delete(d); }
     public Device findById(long id){ return dao.findById(id); }
+    public LiveData<List<Device>> getAps(){ return dao.getByType(DeviceType.AP); }
 
     public LiveData<List<Device>> getAllGroupedByStatus() { return dao.getAllOrderByStatus(); }
 

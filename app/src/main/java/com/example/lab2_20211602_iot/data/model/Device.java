@@ -17,7 +17,8 @@ public class Device {
 
     public Integer ports;
     public Boolean manageable;
-
+    public APFrequency frequency;
+    public Integer rangeMeters;
     public DeviceStatus status;
 
     public Device() { }
@@ -60,6 +61,17 @@ public class Device {
         d.model = model;
         d.ports = ports;
         d.manageable = manageable;
+        d.status = status;
+        return d;
+    }
+    @Ignore
+    public static Device ap(String brand, String model, APFrequency freq, int rangeMeters, DeviceStatus status){
+        Device d = new Device();
+        d.type = DeviceType.AP;
+        d.brand = brand;
+        d.model = model;
+        d.frequency = freq;
+        d.rangeMeters = rangeMeters;
         d.status = status;
         return d;
     }
