@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         binding.btnAps.setOnClickListener(v ->
                 startActivity(new Intent(this, com.example.lab2_20211602_iot.ui.aps.APListActivity.class)));
 
-        binding.btnReporte.setOnClickListener(v -> {/* aun falta programar pes */});
+        binding.btnReporte.setOnClickListener(v ->
+                startActivity(new android.content.Intent(
+                        this, com.example.lab2_20211602_iot.ui.report.ReportActivity.class)));
     }
 }
